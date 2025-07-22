@@ -1,4 +1,4 @@
-.name: Unzip and Commit
+name: Unzip and Commit
 
 on:
   push:
@@ -8,21 +8,22 @@ on:
 jobs:
   unzip:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Unzip ZIP file
+      - name: Unzip file
+        run: unzip threejs-online-thirdperson-final.zip -d temp
+
+      - name: Move contents
         run: |
-          unzip threejs-online-thirdperson-final.zip -d temp
-          mv temp/* ./
+          mv temp/* . || true
           rm -rf temp threejs-online-thirdperson-final.zip
 
-      - name: Commit unzipped content
+      - name: Commit and push
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
           git add .
-          git commit -m "Unzipped and pushed contents automatically"
+          git commit -m "Unzipped and pushed contents" || echo "Nothing to commit"
           git push
