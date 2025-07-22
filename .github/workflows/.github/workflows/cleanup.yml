@@ -1,0 +1,26 @@
+name: Clean Repo
+
+on:
+  workflow_dispatch: # GitHub'da manuel çalıştırılabilir
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Remove all files except .github folder
+        run: |
+          find . -not -path "./.github/*" -not -path "." -not -name ".github" -exec rm -rf {} +
+
+      - name: Create a clean README file
+        run: echo "# Clean Repository" > README.md
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Cleaned repository"
+          git push
