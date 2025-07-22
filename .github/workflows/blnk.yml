@@ -1,0 +1,26 @@
+name: Unzip Game Files
+
+on:
+  push:
+    branches:
+      - main  # veya "master", hangisini kullanıyorsan
+    paths:
+      - threejs_multiplayer_fixed_v2.zip
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Unzip game file
+        run: |
+          unzip -o threejs_multiplayer_fixed_v2.zip -d ./unzipped
+
+      - name: Move unzipped content to root (optional)
+        run: |
+          shopt -s dotglob
+          mv ./unzipped/* ./
+          rm -rf ./unzipped
