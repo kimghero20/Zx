@@ -1,29 +1,28 @@
-name: Unzip and Commit
+name: Clean All Files Except .github
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  unzip:
+  cleanup:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+    - name: Checkout repo
+      uses: actions/checkout@v4
 
-      - name: Unzip file
-        run: unzip threejs-online-thirdperson-final.zip -d temp
+    - name: Remove all files and folders except .github
+      run: |
+        shopt -s extglob
+        rm -rf !(README.md|.git|.github)
 
-      - name: Move contents
-        run: |
-          mv temp/* . || true
-          rm -rf temp threejs-online-thirdperson-final.zip
+    - name: Add clean README
+      run: echo "# Clean Repository" > README.md
 
-      - name: Commit and push
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add .
-          git commit -m "Unzipped and pushed contents" || echo "Nothing to commit"
-          git push
+    - name: Commit and Push
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add -A
+        git commit -m "Cleanup: remove all files except .github"
+        git push
